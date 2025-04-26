@@ -1,9 +1,21 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
 const connetDB = async () => {
-  mongoose.connection.on('connected', () => console.log('Database Connected!'))
+  try {
+    await mongoose.connect(`${process.env.MONGODB_URI}/prescripto`, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      ssl: true
+    });
 
-  await mongoose.connect(`${process.env.MONGODB_URI}/prescripto`)
-}
+    mongoose.connection.on('connected', () => {
+      console.log('Database Connected!');
+    });
 
-export default connetDB
+  } catch (error) {
+    console.error('Database Connection Failed:', error.message);
+    process.exit(1); // Exit the app if connection fails
+  }
+};
+
+export default connetDB;
